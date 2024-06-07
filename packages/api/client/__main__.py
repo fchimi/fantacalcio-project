@@ -28,9 +28,11 @@ import importlib
 import os.path
 import sys
 
-def main(args):
+def main(args):  
   module_name = args.get("module")
   action = args.get("action")
+  print(module_name)
+  print(action)
 
   if action is None:
     return {"body": {"data": "Missing action", "error": True}}
@@ -51,6 +53,7 @@ def main(args):
       do = f"{action}"
       if hasattr(api, do) and callable(getattr(api, do)):
         func = getattr(api, do)
+        print(repr(func))
         resp = func(args)
 
       if resp is None:
@@ -66,4 +69,18 @@ def main(args):
 
 
   
-  
+if __name__=="__main__":
+    '''test da terminale'''
+    #Esempio chiamata:
+    #> /workspaces/fantacalcio-project/.venv/bin/python /workspaces/fantacalcio-project/packages/api/client/__main__.py fantamaster playerslist
+    #pip install python-dotenv
+    import os 
+    from dotenv import load_dotenv
+    load_dotenv()  #importo variabili da .env, da terminale 
+
+    myenv = os.environ
+    myenv['module']='fantamaster'
+    myenv['action']='playerslist'
+    #myenv['module']=sys.argv[1] #'fantamaster'
+    #myenv['action']=sys.argv[2] #'playerslist'  da riga di comando
+    print(main(myenv))
